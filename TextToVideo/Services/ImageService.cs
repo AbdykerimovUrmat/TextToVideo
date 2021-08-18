@@ -1,13 +1,26 @@
-﻿using System.Drawing;
-using System.Speech.Synthesis;
-using AForge.Video.FFMPEG;
+﻿using Microsoft.Extensions.Options;
+using Models.Options;
+using System.Drawing;
 
 namespace Uploader.Services
 {
     public class ImageService
     {
-        public Image DrawText(string text, Font font, float imageWidth, float imageHeight, Color textColor, Color backColor)
+        private MediaOptions MediaOptions { get; set; }
+
+        public ImageService(IOptions<MediaOptions> mediaOptions)
         {
+            MediaOptions = mediaOptions.Value;
+        }
+
+        public Image TextToImage(string text)
+        {
+            Font font = new("Arial", 20, FontStyle.Italic);
+            float imageWidth = MediaOptions.Width;
+            float imageHeight = MediaOptions.Height;
+            Color textColor = Color.Black;
+            Color backColor = Color.White;
+
             //first, create a dummy bitmap just to get a graphics object
             Image img = new Bitmap(1, 1);
             Graphics drawing = Graphics.FromImage(img);
@@ -38,22 +51,6 @@ namespace Uploader.Services
             drawing.Dispose();
 
             return img;
-        }
-
-        public void CreateVideo(Image image, string path, string videoName, int frameRate, int lengthInSeconds)
-        {
-            using var videoWriter = new VideoFileWriter();
-            videoWriter.Open(path + videoName, image.Width, image.Height, frameRate, VideoCodec.MPEG4, 1000000);
-
-            for(int s = 0; s < lengthInSeconds; s++)
-            {
-                for(int f = 0; f < frameRate; f++)
-                {
-                    videoWriter.WriteVideoFrame(image as Bitmap);
-                }
-            }
-
-            videoWriter.Close();
         }
     }
 }
