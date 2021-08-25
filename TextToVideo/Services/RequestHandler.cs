@@ -41,7 +41,7 @@ namespace Uploader.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            var publishTimeSpan = new TimeSpan(14, 0, 0); // 20:00:00 UTC+6, or 14:00:00 UTC
+            var publishTimeSpan = new TimeSpan(6, 4, 0); // 20:00:00 UTC+6, or 14:00:00 UTC
             var dueTime = publishTimeSpan - DateTime.UtcNow.TimeOfDay;
             
             if(dueTime <= new TimeSpan(0, 0, 0))
@@ -55,7 +55,9 @@ namespace Uploader.Services
 
         public async void DoWork(object state)
         {
-            var requests = await RequestService.Get<RequestModel.Get>();
+            var requests = await RequestService.GetUnused<RequestModel.Get>(10);
+            await RequestService.SetUnused(10);
+
             var font = new Font("Arial", 10, FontStyle.Italic);
             var utcNowString = DateTime.UtcNow.ToString("dd-MM-yyyy_HH-mm-ss");
             var basePath = $"C:\\images\\{utcNowString}\\";

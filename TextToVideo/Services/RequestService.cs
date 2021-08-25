@@ -35,9 +35,29 @@ namespace Uploader.Services
         {
             return await Context.Requests
                 .AsNoTracking()
-                .Where(x => x.CreatedUtc >= DateTime.UtcNow.AddMinutes(-MediaOptions.UpdatePerMinutes))
                 .ProjectToType<T>()
                 .ToListAsync();
-        }   
+        }
+
+        public async Task<List<T>> GetUnused<T>(int topn)
+        {
+            return await Context.Requests
+                .AsNoTracking()
+                .Where(x => !x.IsUsed)
+                .OrderBy(x => x.CreatedUtc)
+                .Take(topn)
+                .ProjectToType<T>()
+                .ToListAsync();
+        }
+
+        public async Task SetUnused(int topn)
+        {
+            await Context.Requests
+                .Where(x => !x.IsUsed)
+                .OrderBy(x => x.CreatedUtc)
+                .Take(topn)
+                .ForEachAsync(x => x.IsUsed = true);
+            Context.SaveChanges();
+        }
     }
 }

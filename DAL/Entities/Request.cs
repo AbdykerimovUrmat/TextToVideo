@@ -12,5 +12,7 @@ namespace DAL.Entities
         public string Text { get; set; }
 
         public DateTime CreatedUtc { get; set; }
+
+        public bool IsUsed { get; set; }
     }
 }

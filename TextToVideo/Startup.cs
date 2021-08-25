@@ -1,12 +1,17 @@
 using DAL.EF;
+using DAL.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Models.Options;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Collections.Generic;
 using System.IO;
 using Uploader.Infrastructure;
 using Uploader.Services;
@@ -32,10 +37,70 @@ namespace Uploader
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(x =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Uploader", Version = "v1" });
+                x.SwaggerDoc("v1", new OpenApiInfo { Title = "OlympReg API", Version = "v1" });
+                x.DescribeAllParametersInCamelCase();
+
+                x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "bearer",
+                });
+
+                x.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+                        },
+                        new List<string>()
+                    },
+                });
+
+                x.CustomSchemaIds(t => t.FullName);
             });
+
+            services.AddIdentityCore<User>(x => 
+                {
+                    x.Password.RequiredLength = 6;
+                    x.Password.RequireLowercase = false;
+                    x.Password.RequireUppercase = false;
+                    x.Password.RequireNonAlphanumeric = false;
+                    x.Password.RequireDigit = false;
+                })
+                .AddRoles<Role>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = settings.Issuer,
+                        ValidAudience = settings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.Key)),
+                        ClockSkew = TimeSpan.Zero,
+                    };
+                });
 
             services.Configure<MediaOptions>(x => Configuration.GetSection("MediaProperties").Bind(x));
 
@@ -47,6 +112,7 @@ namespace Uploader
             services.AddTransient<VideoService>();
             services.AddTransient<RequestService>();
             services.AddHostedService<RequestHandler>();
+            services.AddCors(x => x.AddDefaultPolicy(o => o.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
             MapsterProfile.Register();
         }
 
@@ -56,13 +122,30 @@ namespace Uploader
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Uploader v1"));
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(x =>
+            {
+                x.SwaggerEndpoint("/swagger/v1/swagger.json", "OlympReg V1");
+                x.RoutePrefix = string.Empty;
+                x.DefaultModelExpandDepth(3);
+                x.DefaultModelRendering(ModelRendering.Example);
+                x.DefaultModelsExpandDepth(-1);
+                x.DisplayOperationId();
+                x.DisplayRequestDuration();
+                x.DocExpansion(DocExpansion.None);
+                x.EnableDeepLinking();
+                x.EnableFilter();
+                x.ShowExtensions();
+            });
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Platforms>x86;AnyCPU</Platforms>
+    <Platforms>x86;AnyCPU;</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
