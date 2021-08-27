@@ -1,12 +1,14 @@
 ﻿using System.Drawing;
 using Microsoft.AspNetCore.Mvc;
 using Uploader.Helpers;
+using Uploader.Infrastructure;
 using Uploader.Services;
 
 namespace Uploader.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [AuthorizeRoles("Admin")]
     public class MediaController : ControllerBase
     {
         

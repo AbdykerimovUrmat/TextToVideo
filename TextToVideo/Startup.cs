@@ -100,9 +100,9 @@ namespace Uploader
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = "issuer",
-                        ValidAudience = "audience",
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("secretkey")),
+                        ValidIssuer = "me",
+                        ValidAudience = "you",
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("6f912127-6566-4378-acc7-79ba0d3fe892")),
                         ClockSkew = TimeSpan.Zero,
                     };
                 });
@@ -117,6 +117,8 @@ namespace Uploader
             services.AddTransient<VideoService>();
             services.AddTransient<RequestService>();
             services.AddTransient<UserService>();
+            services.AddTransient<AuthService>();
+
             services.AddHostedService<RequestHandler>();
 
             services.AddCors(x => x.AddDefaultPolicy(o => o.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));

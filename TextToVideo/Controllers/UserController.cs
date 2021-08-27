@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Models.Models;
 using System.Threading.Tasks;
 using Uploader.Services;
@@ -7,6 +8,7 @@ namespace Uploader.Controllers
 {
     [ApiController]
     [Route("api/User")]
+    [AllowAnonymous]
     public class UserController : ControllerBase
     {
         private UserService UserService { get; set; }
