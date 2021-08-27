@@ -1,8 +1,6 @@
-﻿
+﻿using Microsoft.AspNetCore.Identity;
+
 namespace DAL.Entities
 {
-    public class Role
-    {
-        public string Name { get; set; }
-    }
+    public class Role : IdentityRole { }
 }

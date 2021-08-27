@@ -3,4 +3,10 @@
     <TargetFramework>net5.0</TargetFramework>
     <Platforms>x86;AnyCPU;</Platforms>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="10.3.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
 </Project>

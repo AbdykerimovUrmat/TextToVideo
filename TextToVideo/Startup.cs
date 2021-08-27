@@ -1,5 +1,6 @@
 using DAL.EF;
 using DAL.Entities;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,11 +9,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Options;
+using Models.Validators;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Uploader.Infrastructure;
 using Uploader.Services;
 
@@ -36,7 +41,7 @@ namespace Uploader
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<AddIn>());
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "OlympReg API", Version = "v1" });
@@ -95,23 +100,25 @@ namespace Uploader
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = settings.Issuer,
-                        ValidAudience = settings.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.Key)),
+                        ValidIssuer = "issuer",
+                        ValidAudience = "audience",
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("secretkey")),
                         ClockSkew = TimeSpan.Zero,
                     };
                 });
 
             services.Configure<MediaOptions>(x => Configuration.GetSection("MediaProperties").Bind(x));
+            services.AddOptions<MediaOptions>();
 
             var connectionString = Configuration.GetConnectionString("default");
             services.AddDbContext<AppDbContext>(x => x.UseSqlServer(connectionString));
-            services.AddOptions<MediaOptions>("");
             services.AddTransient<ImageService>();
             services.AddTransient<AudioService>();
             services.AddTransient<VideoService>();
             services.AddTransient<RequestService>();
+            services.AddTransient<UserService>();
             services.AddHostedService<RequestHandler>();
+
             services.AddCors(x => x.AddDefaultPolicy(o => o.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
             MapsterProfile.Register();
         }
