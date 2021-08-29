@@ -121,7 +121,17 @@ namespace Uploader
 
             services.AddHostedService<RequestHandler>();
 
-            services.AddCors(x => x.AddDefaultPolicy(o => o.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .SetIsOriginAllowed((host) => true)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
             MapsterProfile.Register();
         }
 
@@ -151,10 +161,10 @@ namespace Uploader
 
             app.UseRouting();
 
+            app.UseCors("AllowAll");
+
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {

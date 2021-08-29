@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>balyk - register</title>
+</head>
+<body style="background-color: black;">
+	<form>
+		<div>
+			<label style="color: white;">Email:</label>
+			<input placeholder="me@example.com" id="email">
+		</div>
+		<div>
+			<label style="color: white;">Password:</label>
+			<input type="password" id="password">
+		</div>
+		<div>
+			<label style="color: white;">Confirm password:</label>
+			<input type="password" id="password-confirm">
+		</div>
+		<button onclick="register(event)">Register</button>
+	</form>
+
+	<script type="text/javascript">
+		async function register(e)
+		{
+			e.preventDefault();
+			var email = document.getElementById('email').value,
+				password = document.getElementById('password').value,
+				passwordConfirmation = document.getElementById('password-confirm').value;
+
+			if(!email || !password || !passwordConfirmation) {
+				alert("All fields should be filled");
+				return;
+			}
+
+			if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+				alert("email is not valid");
+				return;
+			}
+
+			if(password != passwordConfirmation) {
+				alert("password and confirmation dont match");
+				return;
+			}
+
+			if (password.length < 6) {
+				alert("Password should be at least 6 characters long")
+				return;
+			}
+			var response = await fetch("http://localhost:42557/api/User", {
+				headers: {
+				    	'Accept': 'application/json',
+				        'Content-Type': 'application/json'
+				},
+				method: 'post',
+				body: JSON.stringify({
+					'email': email,
+					'password': password,
+					'passwordConfirmation': passwordConfirmation
+				})
+			});
+
+			if(response.status == 200 || response.status == 204) {
+				window.location.replace("login.html");
+				alert("registration completed successfully, please login");
+			}
+		}
+	</script>
+
+	<a href="login.html" style="color:white;">Login</a>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>balyk - login</title>
+</head>
+<body style="background-color: black;">
+	<form>
+		<div>
+			<label style="color: white;">Email:</label>
+			<input placeholder="me@example.com" id="email">
+		</div>
+		<div>
+			<label style="color: white;">Password:</label>
+			<input type="password" id="password">
+		</div>
+		<button onclick="login(event)">Login</button>
+	</form>
+
+	<script type="text/javascript">
+		var localStorage = window.localStorage;
+
+		async function login(e)
+		{
+			e.preventDefault();
+			var email = document.getElementById('email').value,
+				password = document.getElementById('password').value;
+
+			if(!email || !password) {
+				alert("All fields should be filled");
+				return;
+			}
+
+			if (password.length < 6) {
+				alert("Password should be at least 6 characters long")
+				return;
+			}
+
+			var response = await fetch("http://localhost:42557/api/Auth", {
+				headers: {
+			    	'Accept': 'plain/text',
+			        'Content-Type': 'application/json'
+				},
+				method: 'post',
+				body: JSON.stringify({
+					'email': email,
+					'password': password
+				})
+			});
+
+			if(response.status != 200 && response.status != 204)
+			{
+				alert("Login or password is incorrect");
+				return;
+			}
+
+			var token = "Bearer " + await response.text();
+			localStorage.setItem('token', token);
+			window.location.replace("index.html");
+		}
+	</script>
+	<a href="register.html" style="color:white;">Register</a>
+</body>
+</html>

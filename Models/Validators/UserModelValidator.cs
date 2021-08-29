@@ -8,8 +8,8 @@ namespace Models.Validators
     {
         public AddIn()
         {
-            RuleFor(x => x.Email).Must(x => x.IsEmail()).WithMessage("Provided email is not valid");
-            RuleFor(x => x.PasswordConfirmation).Equal(x => x.Password).WithMessage("Password and confirmation should match");
+            RuleFor(x => x.Email).NotNull().NotEmpty().Must(x => x.IsEmail()).WithMessage("Provided email is not valid");
+            RuleFor(x => x.Password).Equal(x => x.PasswordConfirmation).WithMessage("Password and confirmation should match").NotNull().NotEmpty().WithMessage("Password has to be not null");
         }
     }
 }

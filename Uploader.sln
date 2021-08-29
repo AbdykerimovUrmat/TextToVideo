@@ -11,13 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{83F800B4-D6CD-439F-950F-AD15279335A7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Front", "Front", "{8186D5F3-AE2C-4C18-A8BB-2293FAB24948}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\Desktop\front\index.html = ..\..\..\Desktop\front\index.html
-		..\..\..\Desktop\front\login.html = ..\..\..\Desktop\front\login.html
-		..\..\..\Desktop\front\register.html = ..\..\..\Desktop\front\register.html
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

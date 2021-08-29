@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>balyk</title>
+</head>
+<body style="background-color: black;">
+	<form>
+		<input type="text" id="text-input">
+		<button onclick="btnclick(event)">I am button</button>
+	</form>
+	<script type="text/javascript">
+		var localStorage = window.localStorage;
+		if(!localStorage.getItem('token')) {
+			window.location.replace("login.html");
+		}
+
+		async function btnclick(e) {
+			e.preventDefault();
+			var token = localStorage.getItem('token');
+			if(!token) {
+				window.location.replace("login.html");
+			}
+
+			var data = document.getElementById('text-input').value;
+			if(!data) {
+				alert("text field has to be filled");
+				return;
+			}
+			var response = await fetch('http://localhost:42557/api/Request', {
+				headers: {
+			    	'Accept': 'plain/text',
+			        'Content-Type': 'application/json',
+			        'Authorization': token
+			    },
+				method: 'post',
+				body: JSON.stringify({text: data})
+			});
+
+			if(response.status == 200) {
+				alert("Successfully submited!");
+			}
+		};
+	</script>
+
+	<a href="login.html" style="color:white;">Login</a>
+	<a href="register.html" style="color:white;">Register</a>
+</body>
+</html>
