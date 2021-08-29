@@ -19,7 +19,7 @@ namespace Uploader.Controllers
         }
 
         [HttpPost]
-        public async Task<string> Login(LoginModel.LoginIn model)
+        public async Task<LoginModel.LoginOut> Login(LoginModel.LoginIn model)
         {
             return await AuthService.AccessToken(model);
         }

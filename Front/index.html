@@ -11,16 +11,10 @@
 	</form>
 	<script type="text/javascript">
 		var localStorage = window.localStorage;
-		if(!localStorage.getItem('token')) {
-			window.location.replace("login.html");
-		}
+		isLoggedIn();
 
 		async function btnclick(e) {
 			e.preventDefault();
-			var token = localStorage.getItem('token');
-			if(!token) {
-				window.location.replace("login.html");
-			}
 
 			var data = document.getElementById('text-input').value;
 			if(!data) {
@@ -41,9 +35,34 @@
 				alert("Successfully submited!");
 			}
 		};
-	</script>
 
-	<a href="login.html" style="color:white;">Login</a>
+		function redirectTo(page) {
+			window.location.replace(page);
+		}
+
+		function isLoggedIn() {
+			var token = localStorage.getItem('token'),
+				email = localStorage.getItem('email'),
+				expirationDate = localStorage.getItem('expirationDate'),
+				expirationDateTimeStamp = new Date(expirationDate).getTime(),
+				currentTimeStamp = new Date().getTime();
+
+			if(!token || expirationDateTimeStamp >= currentTimeStamp) {
+				alert("Login or register first");
+				removeUserData();
+				redirectTo("login.html");
+			}
+		}
+
+		function removeUserData() {
+			localStorage.removeItem('token');
+			localStorage.removeItem('email');
+			localStorage.removeItem('expirationDate');
+		}
+
+		//TODO:onclick logout; Add Hi email; Ensure expdate works
+	</script>
+	<a href="login.html" style="color:white;">Logout</a>
 	<a href="register.html" style="color:white;">Register</a>
 </body>
 </html>

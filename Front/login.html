@@ -20,25 +20,19 @@
 	<script type="text/javascript">
 		var localStorage = window.localStorage;
 
-		async function login(e)
-		{
+		async function login(e) {
 			e.preventDefault();
+
 			var email = document.getElementById('email').value,
 				password = document.getElementById('password').value;
 
-			if(!email || !password) {
-				alert("All fields should be filled");
+			if(!isLoginInputValid(email, password)) {
 				return;
 			}
 
-			if (password.length < 6) {
-				alert("Password should be at least 6 characters long")
-				return;
-			}
-
-			var response = await fetch("http://localhost:42557/api/Auth", {
+			var loginResponse = await fetch("http://localhost:42557/api/Auth", {
 				headers: {
-			    	'Accept': 'plain/text',
+			    	'Accept': 'application/json',
 			        'Content-Type': 'application/json'
 				},
 				method: 'post',
@@ -48,17 +42,40 @@
 				})
 			});
 
-			if(response.status != 200 && response.status != 204)
-			{
+			var loginData = await loginResponse.json();
+
+			if(!isStatusOk(loginResponse.status)) {
 				alert("Login or password is incorrect");
 				return;
 			}
 
-			var token = "Bearer " + await response.text();
+			var token = "Bearer " + loginData.accessToken;
 			localStorage.setItem('token', token);
+			localStorage.setItem('expirationDate', loginData.expirationDate);
+			localStorage.setItem('email', loginData.userName);
+			alert("Successfully logged in")
 			window.location.replace("index.html");
 		}
+
+		function isLoginInputValid(email, password) {
+			if(!email || !password) {
+				alert("All fields should be filled");
+				return false;
+			}
+
+			if (password.length < 6) {
+				alert("Password should be at least 6 characters long")
+				return false;
+			}
+
+			return true;
+		}
+
+		function isStatusOk(status) {
+			return status == 200 || status == 204;
+		}
 	</script>
+
 	<a href="register.html" style="color:white;">Register</a>
 </body>
 </html>

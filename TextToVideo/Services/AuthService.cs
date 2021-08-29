@@ -21,10 +21,18 @@ namespace Uploader.Services
             UserManager = userManager;
         }
 
-        public async Task<string> AccessToken(LoginModel.LoginIn model) 
+        public async Task<LoginModel.LoginOut> AccessToken(LoginModel.LoginIn model) 
         {
-            var (_, claims, _) = await UserClaimsRoleNames(model.Email, model.Password);
-            return AccessToken(claims);
+            var (user, claims, _) = await UserClaimsRoleNames(model.Email, model.Password);
+
+            var (accessToken, expirationDate) = AccessToken(claims);
+
+            return new LoginModel.LoginOut
+            {
+                AccessToken = accessToken,
+                ExpirationDate = expirationDate,
+                UserName = user.UserName
+            };
         }
 
         private async Task<(User User, IEnumerable<Claim> Claims, IEnumerable<string> RoleNames)> UserClaimsRoleNames(string email, string password)
@@ -45,7 +53,7 @@ namespace Uploader.Services
             return (user, claims, roles);
         }
 
-        public string AccessToken(IEnumerable<Claim> claims)
+        public (string AccessToken, DateTime ExpirationDate) AccessToken(IEnumerable<Claim> claims)
         {
             var utcNow = DateTime.UtcNow;
             var expirationDate = utcNow.Add(TimeSpan.FromMinutes(1000));
@@ -57,7 +65,8 @@ namespace Uploader.Services
                 expires: expirationDate,
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes("6f912127-6566-4378-acc7-79ba0d3fe892")), SecurityAlgorithms.HmacSha256Signature)
                 );
-            return new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            return (new JwtSecurityTokenHandler().WriteToken(jwt), expirationDate);
         }
     }
 }
