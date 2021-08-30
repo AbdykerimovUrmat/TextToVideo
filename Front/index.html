@@ -7,15 +7,15 @@
 <body style="background-color: black;">
 	<form>
 		<input type="text" id="text-input">
-		<button onclick="btnclick(event)">I am button</button>
+		<button onclick="submitData(event)">Submit</button>
 	</form>
 	<script type="text/javascript">
 		var localStorage = window.localStorage;
 		isLoggedIn();
 
-		async function btnclick(e) {
+		async function submitData(e) {
 			e.preventDefault();
-
+			isLoggedIn();
 			var data = document.getElementById('text-input').value;
 			if(!data) {
 				alert("text field has to be filled");
@@ -47,7 +47,7 @@
 				expirationDateTimeStamp = new Date(expirationDate).getTime(),
 				currentTimeStamp = new Date().getTime();
 
-			if(!token || expirationDateTimeStamp >= currentTimeStamp) {
+			if(!token || expirationDateTimeStamp <= currentTimeStamp) {
 				alert("Login or register first");
 				removeUserData();
 				redirectTo("login.html");
@@ -60,9 +60,15 @@
 			localStorage.removeItem('expirationDate');
 		}
 
+		function logout(e) {
+			e.preventDefault();
+			removeUserData();
+			alert("Successfully logged out");
+			redirectTo("login.html");
+		}		
+
 		//TODO:onclick logout; Add Hi email; Ensure expdate works
 	</script>
-	<a href="login.html" style="color:white;">Logout</a>
-	<a href="register.html" style="color:white;">Register</a>
+	<button onclick="logout(event)">Logout</a>
 </body>
 </html>

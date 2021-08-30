@@ -53,8 +53,8 @@
 			localStorage.setItem('token', token);
 			localStorage.setItem('expirationDate', loginData.expirationDate);
 			localStorage.setItem('email', loginData.userName);
-			alert("Successfully logged in")
-			window.location.replace("index.html");
+			alert("Successfully logged in");
+			redirectTo("index.html");
 		}
 
 		function isLoginInputValid(email, password) {
