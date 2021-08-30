@@ -56,7 +56,7 @@ namespace Uploader.Services
         public (string AccessToken, DateTime ExpirationDate) AccessToken(IEnumerable<Claim> claims)
         {
             var utcNow = DateTime.UtcNow;
-            var expirationDate = utcNow.Add(TimeSpan.FromMinutes(1000));
+            var expirationDate = utcNow.Add(TimeSpan.FromMinutes(4320));
             var jwt = new JwtSecurityToken(
                 issuer: "me",
                 audience: "you",

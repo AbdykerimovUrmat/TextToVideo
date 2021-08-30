@@ -9,6 +9,8 @@
 		<input type="text" id="text-input">
 		<button onclick="submitData(event)">Submit</button>
 	</form>
+	<button onclick="logout(event)">Logout</button>
+	<p id="hi" style="color:white;"></p>
 	<script type="text/javascript">
 		var localStorage = window.localStorage;
 		isLoggedIn();
@@ -21,6 +23,8 @@
 				alert("text field has to be filled");
 				return;
 			}
+
+			var token = localStorage.getItem('token');
 			var response = await fetch('http://localhost:42557/api/Request', {
 				headers: {
 			    	'Accept': 'plain/text',
@@ -67,8 +71,10 @@
 			redirectTo("login.html");
 		}		
 
-		//TODO:onclick logout; Add Hi email; Ensure expdate works
+		//TODO:Ensure expdate works
+		var email = localStorage.getItem("email");
+		var hi = document.getElementById("hi");
+		hi.innerText = "Logged in as: " + email;
 	</script>
-	<button onclick="logout(event)">Logout</a>
 </body>
 </html>

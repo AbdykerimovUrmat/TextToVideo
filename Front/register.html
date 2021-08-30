@@ -62,11 +62,15 @@
 			});
 
 			if(response.status == 200 || response.status == 204) {
-				window.location.replace("login.html");
+				redirectTo("login.html");
 				alert("registration completed successfully, please login");
 			} else {
 				alert("Error during registration, email might be already used, try using another email"); //Add exception handler
 			}
+		}
+
+		function redirectTo(page) {
+			window.location.replace(page);
 		}
 	</script>
 
