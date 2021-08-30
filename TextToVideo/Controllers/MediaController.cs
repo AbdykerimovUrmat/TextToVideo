@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Uploader.Helpers;
 using Uploader.Infrastructure;
 using Uploader.Services;
@@ -11,7 +10,6 @@ namespace Uploader.Controllers
     [AuthorizeRoles("Admin")]
     public class MediaController : ControllerBase
     {
-        
         private ImageService ImageService { get; }
 
         private AudioService AudioService { get; }
@@ -38,10 +36,6 @@ namespace Uploader.Controllers
         [Route("Image")]
         public FileContentResult TextToImage(string text)
         {
-            for (int i = 20; i < text.Length; i += 20)
-            {
-                text = text.Insert(i, "\n");
-            }
             var image = ImageService.TextToImage(text);
 
             return File(image.ToBytes(), "image/png");
@@ -53,10 +47,6 @@ namespace Uploader.Controllers
         {
             AudioService.TextToAudio(@"C:\images\voice.wav", text);
             var videoDuration = AudioHelper.GetSoundLength(@"C:\images\voice.wav") / 1000.0f;
-            for (int i = 20; i < text.Length; i += 20)
-            {
-                text = text.Insert(i, "\n");
-            }
             var image = ImageService.TextToImage(text);
             image.Save(@"C:\images\0.jpg");
             VideoService.CreateVideo(image, @"C:\images\", "video.avi", 24, (int)videoDuration + 1);

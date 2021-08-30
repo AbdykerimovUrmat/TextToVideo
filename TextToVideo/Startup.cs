@@ -1,3 +1,7 @@
+using System;
+using System.Text;
+using System.IO;
+using System.Collections.Generic;
 using DAL.EF;
 using DAL.Entities;
 using FluentValidation.AspNetCore;
@@ -14,10 +18,6 @@ using Microsoft.OpenApi.Models;
 using Models.Options;
 using Models.Validators;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using Uploader.Infrastructure;
 using Uploader.Services;
 
@@ -42,6 +42,9 @@ namespace Uploader
         {
 
             services.AddControllers().AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<AddIn>());
+
+            #region Swagger
+
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "OlympReg API", Version = "v1" });
@@ -77,6 +80,10 @@ namespace Uploader
                 x.CustomSchemaIds(t => t.FullName);
             });
 
+            #endregion
+
+            #region Auth, bearer, identity
+
             services.AddIdentityCore<User>(x => 
                 {
                     x.Password.RequiredLength = 6;
@@ -107,11 +114,16 @@ namespace Uploader
                     };
                 });
 
+            #endregion
+
             services.Configure<MediaOptions>(x => Configuration.GetSection("MediaProperties").Bind(x));
             services.AddOptions<MediaOptions>();
 
             var connectionString = Configuration.GetConnectionString("default");
             services.AddDbContext<AppDbContext>(x => x.UseSqlServer(connectionString));
+
+            #region Services
+
             services.AddTransient<ImageService>();
             services.AddTransient<AudioService>();
             services.AddTransient<VideoService>();
@@ -120,6 +132,8 @@ namespace Uploader
             services.AddTransient<AuthService>();
 
             services.AddHostedService<RequestHandler>();
+
+            #endregion
 
             services.AddCors(options =>
             {
@@ -132,6 +146,7 @@ namespace Uploader
                         .AllowAnyMethod();
                 });
             });
+
             MapsterProfile.Register();
         }
 
@@ -166,10 +181,13 @@ namespace Uploader
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseMiddleware<ExceptionHandler>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }

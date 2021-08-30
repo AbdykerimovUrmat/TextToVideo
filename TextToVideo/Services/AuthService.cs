@@ -5,6 +5,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Common.Exceptions;
+using Common.Extensions;
 using DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -38,11 +40,17 @@ namespace Uploader.Services
         private async Task<(User User, IEnumerable<Claim> Claims, IEnumerable<string> RoleNames)> UserClaimsRoleNames(string email, string password)
         {
             var user = await UserManager.FindByNameAsync(email);
-            var roles = await UserManager.GetRolesAsync(user);
-            if(!await UserManager.CheckPasswordAsync(user, password))
+            if (user.IsNull())
             {
-                throw new Exception("Password is incorrect");
+                throw new InnerException($"User with email: '{email}' doesn't exist!", "10003");
             }
+
+            if (!await UserManager.CheckPasswordAsync(user, password))
+            {
+                throw new InnerException("Password is incorrect", "10000", nameof(password));
+            }
+
+            var roles = await UserManager.GetRolesAsync(user);
             var claims = new List<Claim>
             { 
                 new Claim(ClaimTypes.NameIdentifier, user.Id),

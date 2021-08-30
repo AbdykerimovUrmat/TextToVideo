@@ -1,5 +1,5 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using Common.Exceptions;
 
 namespace Common.Extensions
 {
@@ -9,7 +9,7 @@ namespace Common.Extensions
         {
             if(str.IsNullOrEmpty())
             {
-                throw new Exception("str should not be empty");
+                throw new InnerException("str should not be empty", "10002");
             }
             Regex r = new(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
 
@@ -18,7 +18,7 @@ namespace Common.Extensions
 
         public static bool IsNullOrEmpty(this string str)
         {
-            return (str == null || str == "");
+            return (str.IsNull() || str == "");
         }
     }
 }

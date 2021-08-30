@@ -1,16 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Models.Models;
-using System.Collections.Generic;
-using Uploader.Helpers;
-using System.Linq;
 using Microsoft.Extensions.Options;
+using Models.Models;
 using Models.Options;
+using Uploader.Helpers;
 
 namespace Uploader.Services
 {
@@ -75,7 +75,7 @@ namespace Uploader.Services
                 images.Add((img, AudioHelper.GetSoundLength(basePath + $"voices\\{i}.wav") / 1000f));
             }
 
-            VideoService.CreateVideoFromList(images, 1440, 720, basePath + "videos\\video.avi", 24);
+            VideoService.CreateVideoFromList(images, MediaOptions.Width, MediaOptions.Height, basePath + "videos\\video.avi", 24);
             AudioService.ListToAudio(basePath + "voices\\result.wav", requests.Select(x => x.Text));
             VideoService.MergeVideoAudio(basePath + "voices\\result.wav", basePath + "videos\\video.avi", basePath + "result\\result.avi");
         }

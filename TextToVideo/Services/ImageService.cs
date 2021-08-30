@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Drawing;
+using Microsoft.Extensions.Options;
 using Models.Options;
-using System.Drawing;
 
 namespace Uploader.Services
 {
@@ -15,6 +15,11 @@ namespace Uploader.Services
 
         public Image TextToImage(string text)
         {
+            for (int i = 50; i < text.Length; i += 51)
+            {
+                text = text.Insert(i, "\n");
+            }
+
             Font font = new("Arial", 20, FontStyle.Italic);
             float imageWidth = MediaOptions.Width;
             float imageHeight = MediaOptions.Height;
