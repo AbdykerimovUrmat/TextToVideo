@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{8A6ADA79-2241-495C-825A-B8E425FDAFEA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{83F800B4-D6CD-439F-950F-AD15279335A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,14 @@ Global
 		{8A6ADA79-2241-495C-825A-B8E425FDAFEA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8A6ADA79-2241-495C-825A-B8E425FDAFEA}.Release|x86.ActiveCfg = Release|Any CPU
 		{8A6ADA79-2241-495C-825A-B8E425FDAFEA}.Release|x86.Build.0 = Release|Any CPU
+		{83F800B4-D6CD-439F-950F-AD15279335A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83F800B4-D6CD-439F-950F-AD15279335A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83F800B4-D6CD-439F-950F-AD15279335A7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{83F800B4-D6CD-439F-950F-AD15279335A7}.Debug|x86.Build.0 = Debug|Any CPU
+		{83F800B4-D6CD-439F-950F-AD15279335A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83F800B4-D6CD-439F-950F-AD15279335A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83F800B4-D6CD-439F-950F-AD15279335A7}.Release|x86.ActiveCfg = Release|Any CPU
+		{83F800B4-D6CD-439F-950F-AD15279335A7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

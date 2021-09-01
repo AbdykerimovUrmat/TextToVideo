@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Models.Models;
-using System.Threading.Tasks;
+using Uploader.Infrastructure;
 using Uploader.Services;
 
 namespace Uploader.Controllers
 {
     [ApiController]
     [Route("api/Request")]
+    [AuthorizeRoles("Admin, User")]
     public class RequestController : ControllerBase
     {
         private RequestService RequestService { get; set; }

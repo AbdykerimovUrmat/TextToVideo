@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>balyk</title>
+</head>
+<body style="background-color: black;">
+	<form>
+		<input type="text" id="text-input">
+		<button onclick="submitData(event)">Submit</button>
+	</form>
+	<button onclick="logout(event)">Logout</button>
+	<p id="hi" style="color:white;"></p>
+	<script type="text/javascript">
+		var localStorage = window.localStorage;
+		isLoggedIn();
+
+		async function submitData(e) {
+			e.preventDefault();
+			isLoggedIn();
+			var data = document.getElementById('text-input').value;
+			if(!data) {
+				alert("text field has to be filled");
+				return;
+			}
+
+			var token = localStorage.getItem('token');
+			var response = await fetch('http://localhost:42557/api/Request', {
+				headers: {
+			    	'Accept': 'plain/text',
+			        'Content-Type': 'application/json',
+			        'Authorization': token
+			    },
+				method: 'post',
+				body: JSON.stringify({text: data})
+			});
+
+			if(response.status == 200) {
+				alert("Successfully submited!");
+			}
+		};
+
+		function redirectTo(page) {
+			window.location.replace(page);
+		}
+
+		function isLoggedIn() {
+			var token = localStorage.getItem('token'),
+				email = localStorage.getItem('email'),
+				expirationDate = localStorage.getItem('expirationDate'),
+				expirationDateTimeStamp = new Date(expirationDate).getTime(),
+				currentTimeStamp = new Date().getTime();
+
+			if(!token || expirationDateTimeStamp <= currentTimeStamp) {
+				alert("Login or register first");
+				removeUserData();
+				redirectTo("login.html");
+			}
+		}
+
+		function removeUserData() {
+			localStorage.removeItem('token');
+			localStorage.removeItem('email');
+			localStorage.removeItem('expirationDate');
+		}
+
+		function logout(e) {
+			e.preventDefault();
+			removeUserData();
+			alert("Successfully logged out");
+			redirectTo("login.html");
+		}		
+
+		//TODO:Ensure expdate works
+		var email = localStorage.getItem("email");
+		var hi = document.getElementById("hi");
+		hi.innerText = "Logged in as: " + email;
+	</script>
+</body>
+</html>

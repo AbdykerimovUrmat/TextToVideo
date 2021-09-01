@@ -12,5 +12,7 @@ namespace Models.Options
         public int FrameRate { get; set; }
 
         public int UpdatePerMinutes { get; set; }
+
+        public int RequestsCount { get; set; }
     }
 }

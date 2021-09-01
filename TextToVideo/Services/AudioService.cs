@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Speech.Synthesis;
 
 namespace Uploader.Services

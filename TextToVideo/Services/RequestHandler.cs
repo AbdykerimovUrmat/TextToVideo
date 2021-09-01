@@ -1,16 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Models.Models;
-using System.Collections.Generic;
-using Uploader.Helpers;
-using System.Linq;
 using Microsoft.Extensions.Options;
+using Models.Models;
 using Models.Options;
+using Uploader.Helpers;
 
 namespace Uploader.Services
 {
@@ -41,7 +41,7 @@ namespace Uploader.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            var publishTimeSpan = new TimeSpan(14, 0, 0); // 20:00:00 UTC+6, or 14:00:00 UTC
+            var publishTimeSpan = new TimeSpan(14, 00, 00); // 20:00:00 UTC+6, or 14:00:00 UTC
             var dueTime = publishTimeSpan - DateTime.UtcNow.TimeOfDay;
             
             if(dueTime <= new TimeSpan(0, 0, 0))
@@ -55,7 +55,9 @@ namespace Uploader.Services
 
         public async void DoWork(object state)
         {
-            var requests = await RequestService.Get<RequestModel.Get>();
+            var requests = await RequestService.GetUnused<RequestModel.Get>(MediaOptions.RequestsCount);
+            await RequestService.SetUnused(MediaOptions.RequestsCount);
+
             var font = new Font("Arial", 10, FontStyle.Italic);
             var utcNowString = DateTime.UtcNow.ToString("dd-MM-yyyy_HH-mm-ss");
             var basePath = $"C:\\images\\{utcNowString}\\";
@@ -73,7 +75,7 @@ namespace Uploader.Services
                 images.Add((img, AudioHelper.GetSoundLength(basePath + $"voices\\{i}.wav") / 1000f));
             }
 
-            VideoService.CreateVideoFromList(images, 1440, 720, basePath + "videos\\video.avi", 24);
+            VideoService.CreateVideoFromList(images, MediaOptions.Width, MediaOptions.Height, basePath + "videos\\video.avi", 24);
             AudioService.ListToAudio(basePath + "voices\\result.wav", requests.Select(x => x.Text));
             VideoService.MergeVideoAudio(basePath + "voices\\result.wav", basePath + "videos\\video.avi", basePath + "result\\result.avi");
         }

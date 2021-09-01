@@ -1,8 +1,7 @@
-﻿using AForge.Video.FFMPEG;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using AForge.Video.FFMPEG;
 
 namespace Uploader.Services
 {
