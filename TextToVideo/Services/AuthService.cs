@@ -33,7 +33,8 @@ namespace Uploader.Services
             {
                 AccessToken = accessToken,
                 ExpirationDate = expirationDate,
-                UserName = user.UserName
+                UserName = user.UserName,
+                UserId = user.Id,
             };
         }
 
