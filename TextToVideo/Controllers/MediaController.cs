@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Models.Models;
 using Uploader.Helpers;
 using Uploader.Infrastructure;
 using Uploader.Services;
@@ -6,7 +8,7 @@ using Uploader.Services;
 namespace Uploader.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/Media")]
     [AuthorizeRoles("Admin")]
     public class MediaController : ControllerBase
     {
@@ -25,6 +27,9 @@ namespace Uploader.Controllers
 
         [HttpGet]
         [Route("Audio")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BadRequestModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BadRequestModel), StatusCodes.Status500InternalServerError)]
         public FileContentResult TextToAudio(string text)
         {
             AudioService.TextToAudio(@"C:\images\voice.wav", text);
@@ -34,15 +39,20 @@ namespace Uploader.Controllers
 
         [HttpGet]
         [Route("Image")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BadRequestModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BadRequestModel), StatusCodes.Status500InternalServerError)]
         public FileContentResult TextToImage(string text)
         {
             var image = ImageService.TextToImage(text);
-
             return File(image.ToBytes(), "image/png");
         }
 
         [HttpGet]
         [Route("Video")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(BadRequestModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BadRequestModel), StatusCodes.Status500InternalServerError)]
         public void TextToVideo(string text)
         {
             AudioService.TextToAudio(@"C:\images\voice.wav", text);
