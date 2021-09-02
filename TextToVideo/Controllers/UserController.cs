@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models.Models;
 using Uploader.Services;
@@ -18,8 +19,11 @@ namespace Uploader.Controllers
             UserService = userService;
         }
 
-        [Route("")]
         [HttpPost]
+        [Route("")]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BadRequestModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BadRequestModel), StatusCodes.Status500InternalServerError)]
         public async Task Add(UserModel.AddIn model)
         {
             await UserService.Add(model);
