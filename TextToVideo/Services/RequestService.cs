@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Exceptions;
+using Common.Extensions;
 using DAL.EF;
 using DAL.Entities;
 using Mapster;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Models.Options;
 
 namespace Uploader.Services
 {
@@ -14,19 +16,30 @@ namespace Uploader.Services
     {
         private AppDbContext Context { get; set; }
 
-        private MediaOptions MediaOptions { get; set; }
+        private UserService UserService { get; set; }
 
-        public RequestService(AppDbContext context, IOptions<MediaOptions> mediaOptions)
+        private UserManager<User> UserManager { get; set; }
+
+        public RequestService(AppDbContext context, UserService userService, UserManager<User> userManager)
         {
             Context = context;
-            MediaOptions = mediaOptions.Value;
+            UserService = userService;
+            UserManager = userManager;
         }
 
         public async Task<int> Add<T>(T model)
         {
             var entity = model.Adapt<Request>();
             Context.Requests.Add(entity);
+            var userId = UserService.GetUserId();
+            var user = await UserManager.FindByIdAsync(userId);
+
+            if (!CanSubmit(user.LastRequestUtc))
+                throw new InnerException($"User {user.UserName} cannot send messages now, try tommorow!", "10007");
+            
+            user.LastRequestUtc = DateTime.UtcNow;
             await Context.SaveChangesAsync();
+
             return entity.Id;
         }
 
@@ -57,6 +70,21 @@ namespace Uploader.Services
                 .Take(topn)
                 .ForEachAsync(x => x.IsUsed = true);
             Context.SaveChanges();
+        }
+
+        public bool CanSubmit(DateTime? requestDateTimeUtc)
+        {
+            if (requestDateTimeUtc.IsNull())
+                return true;
+
+            var utcNow = DateTime.UtcNow;
+            var yesterdayDeadline = utcNow.AddDays(-1);
+            yesterdayDeadline = yesterdayDeadline.Date.Add(new TimeSpan(14, 0, 0));
+
+            if (requestDateTimeUtc <= yesterdayDeadline)
+                return true;
+
+            return false;
         }
     }
 }

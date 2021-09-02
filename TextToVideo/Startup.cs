@@ -40,7 +40,7 @@ namespace Uploader
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddHttpContextAccessor();
             services.AddControllers().AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<AddIn>());
 
             #region Swagger
@@ -134,6 +134,7 @@ namespace Uploader
             services.AddHostedService<RequestHandler>();
 
             #endregion
+
 
             services.AddCors(options =>
             {

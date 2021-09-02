@@ -27,7 +27,7 @@
 			var token = localStorage.getItem('token');
 			var response = await fetch('http://localhost:42557/api/Request', {
 				headers: {
-			    	'Accept': 'plain/text',
+			    	'Accept': 'application/json',
 			        'Content-Type': 'application/json',
 			        'Authorization': token
 			    },
@@ -35,8 +35,12 @@
 				body: JSON.stringify({text: data})
 			});
 
-			if(response.status == 200) {
+			var responseData = await response.json();
+
+			if(response.status == 200 || response.status == 204) {
 				alert("Successfully submited!");
+			} else {
+				alert(responseData.Message);
 			}
 		};
 
@@ -70,8 +74,7 @@
 			alert("Successfully logged out");
 			redirectTo("login.html");
 		}		
-
-		//TODO:Ensure expdate works
+                                           
 		var email = localStorage.getItem("email");
 		var hi = document.getElementById("hi");
 		hi.innerText = "Logged in as: " + email;
